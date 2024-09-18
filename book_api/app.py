@@ -114,6 +114,9 @@ def get_book(id):
 @http_auth.login_required
 @app.route("/books", methods=["POST"])
 def create_book():
+    if not http_auth.current_user():
+        return jsonify({"error": "Authentication required"}), 401
+
     try:
         data = request.json
         if not all(key in data for key in ("title", "author", "publication_year")):
@@ -135,6 +138,9 @@ def create_book():
 @http_auth.login_required
 @app.route("/books/<int:id>", methods=["PUT"])
 def update_book(id):
+    if not http_auth.current_user():
+        return jsonify({"error": "Authentication required"}), 401
+
     try:
         data = request.json
         book = Book.query.get_or_404(id)
@@ -150,6 +156,9 @@ def update_book(id):
 @http_auth.login_required
 @app.route("/books/<int:id>", methods=["DELETE"])
 def delete_book(id):
+    if not http_auth.current_user():
+        return jsonify({"error": "Authentication required"}), 401
+
     try:
         book = Book.query.get_or_404(id)
         db.session.delete(book)
